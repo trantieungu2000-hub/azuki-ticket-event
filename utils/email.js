@@ -20,6 +20,9 @@ async function guiEmailXacNhan(donHang) {
   // Lấy thời gian đặt vé
   const thoiGianDat = donHang.Thoi_Gian_Dat || new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
 
+  // Tạo URL mã QR động từ STT vé
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(sttVe)}`;
+
   const mailOptions = {
     from: `"Azuki Team" <${process.env.EMAIL_USER}>`,
     to: donHang.Email,
@@ -41,6 +44,13 @@ async function guiEmailXacNhan(donHang) {
           <li style="margin-bottom: 6px;"><b>Số điện thoại:</b> ${donHang.So_Dien_Thoai}</li>
           <li style="margin-bottom: 6px;"><b>Thời gian đặt vé:</b> ${thoiGianDat}</li>
         </ul>
+
+        <!-- KHU VỰC HIỂN THỊ MÃ QR -->
+        <div style="text-align: center; margin: 25px 0;">
+          <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px;">MÃ QR CHECK-IN CỦA BẠN</p>
+          <img src="${qrCodeUrl}" alt="Mã QR Vé ${sttVe}" style="width: 180px; height: 180px; border: 1px solid #dddddd; padding: 8px; background: #ffffff; display: inline-block;" />
+          <p style="font-size: 13px; color: #555555; margin-top: 6px;">Vui lòng đưa mã này cho BTC tại quầy check-in</p>
+        </div>
 
         <div style="border-top: 1px solid #000000; width: 100%; margin: 20px 0;"></div>
 
