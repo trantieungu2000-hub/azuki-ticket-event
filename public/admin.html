@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Quản Lý Duyệt Vé Azuki</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f9fa; margin: 0; padding: 20px; }
+    .container { max-width: 950px; margin: 20px auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+    h2 { color: #2c3e50; text-align: center; margin-bottom: 25px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; }
+    th { background-color: #2c3e50; color: white; }
+    tr:nth-child(even) { background-color: #f8fafc; }
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
+    .badge-pending { background: #f39c12; color: white; }
+    .badge-success { background: #27ae60; color: white; }
+    .btn-confirm { background: #2980b9; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-confirm:hover { background: #1f618d; }
+  </style>
+</head>
+<body>
+
+<div style="display: flex; gap: 15px; margin-bottom: 20px; text-align: center; max-width: 950px; margin-left: auto; margin-right: auto;">
+  <div style="flex:1; background:#e3f2fd; padding:15px; border-radius:8px;">
+    <small>Đã Thanh Toán</small>
+    <h2 id="stDaThanhToan" style="margin:5px 0; color:#1976d2;">0</h2>
+  </div>
+  <div style="flex:1; background:#e8f5e9; padding:15px; border-radius:8px;">
+    <small>Đã Check-in</small>
+    <h2 id="stDaCheckin" style="margin:5px 0; color:#388e3c;">0</h2>
+  </div>
+  <div style="flex:1; background:#fff3e0; padding:15px; border-radius:8px;">
+    <small>Doanh Thu</small>
+    <h2 id="stDoanhThu" style="margin:5px 0; color:#f57c00;">0đ</h2>
+  </div>
+</div>
+
+<div style="max-width: 950px; margin: 0 auto 15px auto;">
+  <button onclick="window.location.href='/api/azuki/xuat-csv'" style="background:#27ae60; color:white; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">
+    📥 XUẤT FILE EXCEL (CSV)
+  </button>
+</div>
+
+<div class="container">
+  <h2>Quản Lý Thông Tin Vé Sự Kiện</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Mã đơn</th>
+        <th>Khách hàng</th>
+        <th>Liên hệ</th>
+        <th>Số lượng</th>
+        <th>Tổng tiền</th>
+        <th>Trạng thái</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody id="danhSachDonHang"></tbody>
+  </table>
+</div>
+
+<script>
+  async function taiThongKe() {
+    try {
+      const res = await fetch('/api/azuki/thong-ke');
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('stDaThanhToan').innerText = data.data.daThanhToan;
+        document.getElementById('stDaCheckin').innerText = data.data.daCheckin;
+        document.getElementById('stDoanhThu').innerText = Number(data.data.tongDoanhThu).toLocaleString('vi-VN') + 'đ';
+      }
+    } catch (err) {
+      console.error('Lỗi tải thống kê:', err);
+    }
+  }
+
+  async function taiDanhSachDonHang() {
+    try {
+      const res = await fetch('/api/azuki');
+      const data = await res.json();
+      const tbody = document.getElementById('danhSachDonHang');
+      tbody.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Chưa có vé nào!</td></tr>';
+        return;
+      }
+
+      data.forEach(don => {
+        const tr = document.createElement('tr');
+        const isDone = don.Trang_Thai === 'da_thanh_toan' || don.Trang_Thai === 'da_checkin';
+
+        tr.innerHTML = `
+          <td><b style="color:#e74c3c;">${don.Ma_Don_Hang}</b></td>
+          <td><b>${don.Ho_Ten}</b></td>
+          <td>${don.Email}<br><small style="color:#7f8c8d;">${don.So_Dien_Thoai}</small></td>
+          <td>${don.So_Luong} vé</td>
+          <td><b>${Number(don.Tong_Tien).toLocaleString('vi-VN')} VNĐ</b></td>
+          <td>
+            <span class="badge ${isDone ? 'badge-success' : 'badge-pending'}">
+              ${don.Trang_Thai === 'da_checkin' ? 'Đã check-in' : isDone ? 'Đã thanh toán' : 'Chờ thanh toán'}
+            </span>
+          </td>
+          <td>
+            ${!isDone 
+              ? `<button class="btn-confirm" onclick="xacNhanDon('${don.Ma_Don_Hang}')">Xác nhận</button>` 
+              : '<span style="color:#27ae60; font-weight:bold;">✓ Đã duyệt</span>'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (err) {
+      alert('Không thể tải danh sách đơn hàng!');
+    }
+  }
+
+  async function xacNhanDon(maDon) {
+    if (!confirm(`Xác nhận đã nhận tiền cho đơn hàng ${maDon}?`)) return;
+
+    try {
+      const res = await fetch(`/api/azuki/${maDon}/xac-nhan`, { method: 'POST' });
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('Đã duyệt thanh toán & tự động gửi Email xác nhận thành công!');
+        taiDanhSachDonHang();
+        taiThongKe();
+      } else {
+        alert(data.error || 'Có lỗi xảy ra!');
+      }
+    } catch (err) {
+      alert('Không thể gửi yêu cầu xác nhận!');
+    }
+  }
+
+  taiThongKe();
+  taiDanhSachDonHang();
+</script>
+
+</body>
+</html>

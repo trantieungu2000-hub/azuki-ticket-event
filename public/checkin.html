@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soát Vé QR - Azuki</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #eceff1; margin: 0; padding: 15px; }
+    .card { max-width: 480px; margin: 10px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #2c3e50; margin-top: 0; }
+    #reader { width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 15px; }
+    .search-box { display: flex; gap: 8px; margin-bottom: 15px; }
+    input { flex: 1; padding: 12px; border: 2px solid #b0bec5; border-radius: 6px; font-size: 16px; text-transform: uppercase; }
+    button { padding: 12px 18px; background: #2980b9; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    #ketQua { display: none; padding: 15px; border-radius: 8px; text-align: center; margin-top: 15px; }
+    .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>CỔNG SOÁT VÉ AZUKI</h2>
+  
+  <div id="reader"></div>
+
+  <form id="formCheckin" class="search-box">
+    <input type="text" id="maDon" placeholder="Nhập mã vé thủ công" required>
+    <button type="submit">CHECK-IN</button>
+  </form>
+
+  <div id="ketQua"></div>
+</div>
+
+<script>
+  const ketQuaDiv = document.getElementById('ketQua');
+  let dangXuLy = false;
+
+  function phatAmThanh(type) {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      if (type === 'success') {
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.15);
+      } else {
+        osc.frequency.value = 220;
+        gain.gain.setValueAtTime(0.5, ctx.currentTime);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.35);
+      }
+    } catch (e) {
+      console.log('Audio Error:', e);
+    }
+  }
+
+  async function guiCheckIn(maDon) {
+    if (dangXuLy) return;
+    dangXuLy = true;
+
+    try {
+      const res = await fetch(`/api/azuki/${maDon}/check-in`, { method: 'POST' });
+      const data = await res.json();
+
+      ketQuaDiv.style.display = 'block';
+
+      if (data.success) {
+        phatAmThanh('success');
+        ketQuaDiv.className = 'success';
+        ketQuaDiv.innerHTML = `
+          <h3 style="margin:0 0 10px 0;">✔ ${data.message}</h3>
+          <p style="margin:5px 0;"><b>Khách:</b> ${data.donHang.Ho_Ten}</p>
+          <p style="margin:5px 0;"><b>Mã vé:</b> ${data.donHang.Ma_Don_Hang}</p>
+          <p style="margin:5px 0;"><b>Số lượng:</b> ${data.donHang.So_Luong} vé</p>
+        `;
+      } else {
+        phatAmThanh('error');
+        ketQuaDiv.className = 'error';
+        ketQuaDiv.innerHTML = `<h3 style="margin:0;">✖ ${data.message}</h3>`;
+      }
+    } catch (err) {
+      phatAmThanh('error');
+      alert('Lỗi kết nối tới Server!');
+    } finally {
+      setTimeout(() => { dangXuLy = false; }, 2500);
+    }
+  }
+
+  const html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+    fps: 10, 
+    qrbox: { width: 220, height: 220 } 
+  });
+
+  html5QrcodeScanner.render((decodedText) => {
+    document.getElementById('maDon').value = decodedText;
+    guiCheckIn(decodedText);
+  });
+
+  document.getElementById('formCheckin').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const ma = document.getElementById('maDon').value.trim();
+    if (ma) guiCheckIn(ma);
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đặt Vé Sự Kiện Azuki Mini-Off</title>
+  <style>
+    /* IMPORT PHÔNG CHỮ NGHỆ THUẬT VÀ PHÔNG CHỮ CHÍNH */
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+    /* BẢNG PHỐI MÀU TRUNG THU & ĐÈN LỒNG */
+    :root {
+      --bg-event-info: #941B23;      /* Khung thông tin - Đỏ tươi rực rỡ */
+      --bg-form: #FFF4DE;            /* Khung form - Kem bánh trung thu */
+      --border-moon: #F4D35E;        /* Viền khung - Vàng ánh trăng */
+      --text-title: #FFE58A;         /* Tiêu đề - Vàng trăng */
+      --text-info: #FFF3D0;          /* Chữ thông tin - Kem ngà */
+      --text-form: #6B2F2F;          /* Chữ trên form - Nâu đỏ */
+      --accent-lantern: #C82323;     /* Điểm nhấn - Đỏ đèn lồng tươi */
+      --shadow-dark: rgba(25, 12, 30, 0.55); /* Shadow - Tím đen */
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ĐẶT ẢNH NỀN PHỦ TOÀN BỘ TRANG */
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background-image: url('images/backrought.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: var(--text-info);
+      min-height: 100vh;
+    }
+
+    /* HEADER: NỀN TỐI ĐỒNG NHẤT (BỎ ẢNH THỎ GÓC PHẢI) */
+    header {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #1a0b14;
+      padding: 12px 4%;
+      min-height: 80px;
+      border-bottom: 2px solid var(--border-moon);
+      box-shadow: 0 4px 15px var(--shadow-dark);
+    }
+
+    .header-logo {
+      position: absolute;
+      left: 4%;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+    }
+
+    .header-logo img {
+      max-width: 140px;
+      height: auto;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+    }
+
+    /* TIÊU ĐỀ DÙNG PHÔNG CHỮ NGHỆ THUẬT NGHIÊNG */
+    .header-title h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--text-title);
+      font-size: 32px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-align: center;
+      text-shadow: 1px 2px 6px rgba(0, 0, 0, 0.6);
+    }
+
+    h1, h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+    }
+
+    /* TỰ ĐỘNG THU NHỎ TRÊN ĐIỆN THOẠI */
+    @media (max-width: 600px) {
+      header {
+        padding: 10px 12px;
+        min-height: 70px;
+      }
+      .header-logo img {
+        max-width: 90px;
+      }
+      .header-title h1 {
+        font-size: 20px;
+        padding-left: 75px;
+      }
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 30px 15px;
+    }
+
+    /* KHUNG THÔNG TIN SỰ KIỆN (MÀU ĐỎ TƯƠI) */
+    .event-details {
+      background-color: var(--bg-event-info);
+      border: 2px solid var(--border-moon);
+      border-radius: 12px;
+      color: var(--text-info);
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 25px var(--shadow-dark);
+    }
+
+    .event-details h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-title);
+      background-color: rgba(0, 0, 0, 0.25);
+      padding: 8px 18px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+      display: inline-block;
+      border: 1px solid var(--border-moon);
+      letter-spacing: 0.5px;
+    }
+
+    .info-item {
+      display: flex;
+      margin-bottom: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .info-label {
+      width: 150px;
+      flex-shrink: 0;
+      font-weight: bold;
+      color: var(--text-title);
+    }
+
+    /* KHUNG FORM ĐẶT VÉ (NỀN SÁNG) */
+    .booking-form-box {
+      background-color: var(--bg-form);
+      border: 2px solid var(--border-moon);
+      border-radius: 12px;
+      color: var(--text-form);
+      padding: 30px 25px;
+      box-shadow: 0 8px 25px var(--shadow-dark);
+    }
+
+    .booking-form-box h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-form);
+      background-color: rgba(184, 59, 59, 0.12);
+      padding: 8px 18px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      border: 1.5px solid var(--border-moon);
+      letter-spacing: 0.5px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: var(--text-form);
+    }
+
+    .form-label span {
+      color: var(--accent-lantern);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border-moon);
+      border-radius: 6px;
+      font-size: 15px;
+      background-color: #FFFFFF;
+      color: var(--text-form);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent-lantern);
+      box-shadow: 0 0 6px rgba(184, 59, 59, 0.4);
+    }
+
+    /* NÚT TĂNG GIẢM SỐ LƯỢNG */
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quantity-btn {
+      background-color: var(--accent-lantern);
+      color: #FFFFFF;
+      border: 1px solid var(--border-moon);
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .quantity-btn:hover {
+      background-color: var(--text-form);
+    }
+
+    .quantity-input {
+      width: 70px;
+      text-align: center;
+      padding: 8px;
+      border: 1.5px solid var(--border-moon);
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      background-color: #FFFFFF;
+      color: var(--text-form);
+    }
+
+    /* KHUNG THÔNG TIN GIÁ */
+    .price-info {
+      background-color: rgba(107, 47, 47, 0.08);
+      border: 1.5px solid var(--border-moon);
+      border-radius: 8px;
+      padding: 12px 15px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: var(--text-form);
+    }
+
+    .price-info b {
+      color: var(--accent-lantern);
+    }
+
+    /* NÚT SUBMIT */
+    .submit-btn {
+      background-color: var(--accent-lantern);
+      color: #FFFFFF;
+      border: 2px solid var(--border-moon);
+      border-radius: 25px;
+      padding: 14px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px var(--shadow-dark);
+      transition: 0.3s;
+    }
+
+    .submit-btn:hover {
+      background-color: var(--text-form);
+      box-shadow: 0 6px 20px var(--shadow-dark);
+    }
+
+    /* KHU VỰC KẾT QUẢ / QR */
+    #ketQua {
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 10px;
+      display: none;
+      text-align: center;
+      border: 2px solid #27ae60;
+      background-color: #e8f8f5;
+      color: #2c3e50;
+      box-shadow: 0 8px 20px var(--shadow-dark);
+    }
+
+    .qr-img {
+      width: 220px;
+      margin-top: 15px;
+      border: 2px solid #27ae60;
+      padding: 5px;
+      border-radius: 8px;
+      background: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-logo">
+      <img src="images/logo-azuki.png" alt="Azuki Logo">
+    </div>
+    <div class="header-title">
+      <h1>ĐẶT VÉ SỰ KIỆN AZUKI</h1>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <!-- THÔNG TIN SỰ KIỆN -->
+    <section class="event-details">
+      <h2>⭐ AZUKI MINI-OFF TRUNG THU</h2>
+      <div class="info-item">
+        <span class="info-label">📅 Ngày diễn ra:</span>
+        <span>27/9/2026</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">🕒 Thời gian:</span>
+        <span>12h – 17h</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">📍 Địa điểm:</span>
+        <span>Goller Study Cafe, Quảng trường khu dân cư Golden City, Long Xuyên, An Giang</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">👥 Quy mô dự kiến:</span>
+        <span>60+ người tham dự</span>
+      </div>
+    </section>
+
+    <!-- FORM ĐẶT VÉ -->
+    <section class="booking-form-box">
+      <h2>🎟️ THÔNG TIN ĐẶT VÉ ✿</h2>
+      
+      <form id="formDatVe">
+        <div class="form-group">
+          <label class="form-label">Họ và tên <span>*</span></label>
+          <input type="text" id="Ho_Ten" class="form-control" placeholder="ví dụ: Nguyen Van A" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email nhận vé <span>*</span></label>
+          <input type="email" id="Email" class="form-control" placeholder="ví dụ: nguyenvana1999@gmail.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Số điện thoại <span>*</span></label>
+          <input type="tel" id="So_Dien_Thoai" class="form-control" placeholder="ví dụ: 0901234567" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Số lượng vé (50.000 VNĐ/vé) <span>*</span></label>
+          <div class="quantity-control">
+            <button type="button" class="quantity-btn" onclick="doiSoLuong(-1)">-</button>
+            <input type="number" id="So_Luong" class="quantity-input" min="1" value="1" required readonly>
+            <button type="button" class="quantity-btn" onclick="doiSoLuong(1)">+</button>
+          </div>
+        </div>
+
+        <div class="price-info">
+          <b>🎫 Giá vé: 50.000 VNĐ/vé</b><br>
+          Vé đã bao gồm quyền tham dự sự kiện và các hoạt động trong chương trình.
+        </div>
+
+        <button type="submit" class="submit-btn">🎟️ XÁC NHẬN ĐẶT VÉ</button>
+      </form>
+
+      <!-- KHU VỰC HIỂN THỊ KẾT QUẢ / MÃ QR -->
+      <div id="ketQua"></div>
+    </section>
+  </main>
+
+<script>
+  function doiSoLuong(delta) {
+    const input = document.getElementById('So_Luong');
+    let val = parseInt(input.value) + delta;
+    if (val >= 1) input.value = val;
+  }
+
+  const form = document.getElementById('formDatVe');
+  const ketQuaDiv = document.getElementById('ketQua');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      Ho_Ten: document.getElementById('Ho_Ten').value,
+      Email: document.getElementById('Email').value,
+      So_Dien_Thoai: document.getElementById('So_Dien_Thoai').value,
+      So_Luong: document.getElementById('So_Luong').value
+    };
+
+    try {
+      const res = await fetch('/api/azuki', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        const linkQR = data.donHang.qrUrl;
+
+        ketQuaDiv.style.display = 'block';
+        ketQuaDiv.innerHTML = `
+          <h3 style="color: #27ae60;">🎉 Đặt vé thành công!</h3>
+          <p style="margin-top: 8px;">Mã đơn hàng: <b>${data.donHang.Ma_Don_Hang}</b></p>
+          <p>Tổng tiền: <b style="color: #d9534f;">${Number(data.donHang.Tong_Tien).toLocaleString('vi-VN')} VNĐ</b></p>
+          <p style="margin-top: 10px;">Quét mã QR Vietcombank dưới đây để thanh toán:</p>
+          <img class="qr-img" src="${linkQR}" alt="Mã QR Thanh Toán">
+          <p style="font-size: 13px; color: #7f8c8d; margin-top: 12px;">Email xác nhận sẽ được gửi sau khi Admin duyệt thanh toán.</p>
+        `;
+        
+        ketQuaDiv.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        alert(data.message || data.error || 'Có lỗi xảy ra!');
+      }
+    } catch (err) {
+      alert('Không thể kết nối tới Server!');
+    }
+  });
+</script>
+
+</body>
+</html>
