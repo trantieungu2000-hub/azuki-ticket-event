@@ -30,7 +30,7 @@ async function guiEmailXacNhan(donHang) {
     html: `
       <div style="font-family: Arial, sans-serif; color: #000000; line-height: 1.6; max-width: 650px; margin: 0 auto; padding: 15px;">
         
-        <p style="font-size: 15px; margin-bottom: 15px;"><b>Bạn thân mến,</b></p>
+        <p style="font-size: 15px; margin-bottom: 15px;">Bạn thân mến,</p>
         
         <p style="font-size: 15px; font-weight: bold; margin-bottom: 15px;">
           BTC Azuki Team xin thông báo yêu cầu đặt vé của bạn đã được xác nhận thành công.
@@ -61,7 +61,7 @@ async function guiEmailXacNhan(donHang) {
           <p style="margin-top: 12px;">Mọi thắc mắc vui lòng liên hệ cho fanpage Azuki để được hỗ trợ giải đáp.</p>
         </div>
 
-        <p style="font-size: 15px; font-weight: bold; margin-bottom: 15px;">
+        <p style="font-size: 15px; margin-bottom: 15px;">
           Một lần nữa Azuki xin cảm ơn tình iu từ mọi người, và đừng quên cuộc hẹn của chúng ta vào ngày 27 tháng 09 này tại Goller Study Cafe nhé ฅ•ᴥ•ฅ
         </p>
 
