@@ -15,8 +15,11 @@
     .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
     .badge-pending { background: #f39c12; color: white; }
     .badge-success { background: #27ae60; color: white; }
+    .badge-cancelled { background: #e74c3c; color: white; }
     .btn-confirm { background: #2980b9; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
     .btn-confirm:hover { background: #1f618d; }
+    .btn-cancel { background: #c0392b; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px; }
+    .btn-cancel:hover { background: #a93226; }
   </style>
 </head>
 <body>
@@ -89,7 +92,26 @@
 
       data.forEach(don => {
         const tr = document.createElement('tr');
-        const isDone = don.Trang_Thai === 'da_thanh_toan' || don.Trang_Thai === 'da_checkin';
+        
+        let badgeHtml = '';
+        let actionHtml = '';
+
+        if (don.Trang_Thai === 'da_checkin') {
+          badgeHtml = '<span class="badge badge-success">Đã check-in</span>';
+          actionHtml = '<span style="color:#27ae60; font-weight:bold;">✓ Đã duyệt</span>';
+        } else if (don.Trang_Thai === 'da_thanh_toan') {
+          badgeHtml = '<span class="badge badge-success">Đã thanh toán</span>';
+          actionHtml = '<span style="color:#27ae60; font-weight:bold;">✓ Đã duyệt</span>';
+        } else if (don.Trang_Thai === 'da_huy') {
+          badgeHtml = '<span class="badge badge-cancelled">Đã hủy</span>';
+          actionHtml = '<span style="color:#e74c3c; font-weight:bold;">✕ Đã hủy</span>';
+        } else {
+          badgeHtml = '<span class="badge badge-pending">Chờ thanh toán</span>';
+          actionHtml = `
+            <button class="btn-confirm" onclick="xacNhanDon('${don.Ma_Don_Hang}')">Xác nhận</button>
+            <button class="btn-cancel" onclick="huyDon('${don.Ma_Don_Hang}')">Hủy</button>
+          `;
+        }
 
         tr.innerHTML = `
           <td><b style="color:#e74c3c;">${don.Ma_Don_Hang}</b></td>
@@ -97,16 +119,8 @@
           <td>${don.Email}<br><small style="color:#7f8c8d;">${don.So_Dien_Thoai}</small></td>
           <td>${don.So_Luong} vé</td>
           <td><b>${Number(don.Tong_Tien).toLocaleString('vi-VN')} VNĐ</b></td>
-          <td>
-            <span class="badge ${isDone ? 'badge-success' : 'badge-pending'}">
-              ${don.Trang_Thai === 'da_checkin' ? 'Đã check-in' : isDone ? 'Đã thanh toán' : 'Chờ thanh toán'}
-            </span>
-          </td>
-          <td>
-            ${!isDone 
-              ? `<button class="btn-confirm" onclick="xacNhanDon('${don.Ma_Don_Hang}')">Xác nhận</button>` 
-              : '<span style="color:#27ae60; font-weight:bold;">✓ Đã duyệt</span>'}
-          </td>
+          <td>${badgeHtml}</td>
+          <td>${actionHtml}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -127,10 +141,29 @@
         taiDanhSachDonHang();
         taiThongKe();
       } else {
-        alert(data.error || 'Có lỗi xảy ra!');
+        alert(data.message || data.error || 'Có lỗi xảy ra!');
       }
     } catch (err) {
       alert('Không thể gửi yêu cầu xác nhận!');
+    }
+  }
+
+  async function huyDon(maDon) {
+    if (!confirm(`Bạn có chắc chắn muốn HỦY đơn hàng ${maDon}? Suất vé sẽ được hoàn lại hệ thống.`)) return;
+
+    try {
+      const res = await fetch(`/api/azuki/${maDon}/huy`, { method: 'POST' });
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('Đã hủy đơn hàng thành công!');
+        taiDanhSachDonHang();
+        taiThongKe();
+      } else {
+        alert(data.message || data.error || 'Có lỗi xảy ra!');
+      }
+    } catch (err) {
+      alert('Không thể kết nối đến máy chủ!');
     }
   }
 
