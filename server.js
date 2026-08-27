@@ -158,6 +158,24 @@ app.post('/api/azuki/:ma/xac-nhan', async (req, res) => {
   }
 });
 
+// 4b. API Admin hủy đơn hàng thủ công (Bấm nút Hủy trên giao diện Admin)
+app.post('/api/azuki/:ma/huy', (req, res) => {
+  try {
+    const maDonHang = req.params.ma;
+    const donHang = getDb().prepare('SELECT * FROM don_hang WHERE Ma_Don_Hang = ?').get(maDonHang);
+
+    if (!donHang) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng!' });
+    }
+
+    getDb().prepare("UPDATE don_hang SET Trang_Thai = 'da_huy' WHERE Ma_Don_Hang = ?").run(maDonHang);
+
+    res.json({ success: true, message: 'Đã hủy đơn hàng thành công!' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // 5. API Soát vé (Check-in tại cổng)
 app.post('/api/azuki/:ma/check-in', (req, res) => {
   try {
@@ -223,24 +241,6 @@ app.get('/api/azuki/xuat-csv', (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
-
-// Auto-clean: Tự động hủy đơn quá hạn 15 phút
-setInterval(() => {
-  try {
-    const ketQua = getDb().prepare(`
-      UPDATE don_hang 
-      SET Trang_Thai = 'da_huy' 
-      WHERE Trang_Thai = 'cho_thanh_toan' 
-        AND strftime('%s', 'now') - strftime('%s', Ngay_Tao) > 900
-    `).run();
-
-    if (ketQua.changes > 0) {
-      console.log(`[Auto-Clean] Đã tự động hủy ${ketQua.changes} đơn hàng quá hạn thanh toán.`);
-    }
-  } catch (err) {
-    console.error('[Auto-Clean Error]', err.message);
-  }
-}, 60000);
 
 // Khởi chạy Server
 app.listen(PORT, '0.0.0.0', () => {
